@@ -1,67 +1,34 @@
 import './comments.css'
-import Image from '../image/image.jsx'
-import EmojiPicker from 'emoji-picker-react'
-import { useState } from 'react'
 
-const Comments = () => {
-  const [open, setOpen] = useState(false)
+import { useQuery } from '@tanstack/react-query'
+import apiRequest from '../../utils/apiRequest.js'
+import Comment from './comment.jsx'
+import CommentsForm from './commentsForm.jsx'
+
+
+const Comments = ({id}) => {
+  
+  const { isPending, error, data } = useQuery({
+    queryKey: ["comments", id],
+    queryFn: () => apiRequest.get(`/comments/${id}`).then((res) => res.data),
+  });
+
+  if (isPending) return "Loading...";
+  if (error) return "Something went wrong" + error.message;
+  console.log(data)
+
   return (
     <div className='comments'>
       <div className="commentList">
         <span className='commentCount'>
-          4 comments
+          {data.length===0 ? "No Comments" : data.length + " Comments"}
         </span>
         {/* Comments */}
-        <div className="comment">
-          <Image path='./general/noAvatar.png'/>
-          <div className="commentContent">
-            <span className='commentUsername'>John Doe</span>
-            <p className='commentText'>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-            <span className='commentTime'>2 days ago</span>
-        </div>
-      </div>
-        <div className="comment">
-          <Image path='./general/noAvatar.png'/>
-          <div className="commentContent">
-            <span className='commentUsername'>John Doe</span>
-            <p className='commentText'>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-            <span className='commentTime'>2 days ago</span>
-        </div>
-      </div>
-        <div className="comment">
-          <Image path='./general/noAvatar.png'/>
-          <div className="commentContent">
-            <span className='commentUsername'>John Doe</span>
-            <p className='commentText'>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-            <span className='commentTime'>2 days ago</span>
-        </div>
-      </div>
-        <div className="comment">
-          <Image path='./general/noAvatar.png'/>
-          <div className="commentContent">
-            <span className='commentUsername'>John Doe</span>
-            <p className='commentText'>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-            <span className='commentTime'>2 days ago</span>
-        </div>
-      </div>
+        {data.map((comment) => (
+          <Comment  key={comment._id} comment={comment}/>
+        ))}
     </div>
-    <form className='commentForm'>
-      <input type="text" placeholder='Add a Comment' />
-      <div className="emoji">
-        <div onClick={()=>setOpen(prev=>(!prev))}>💀</div>
-        {open && <div className='emojiPicker'>
-        <EmojiPicker/>
-        </div>}
-      </div>
-    </form>
+    <CommentsForm/>
     </div>
   )
 }
