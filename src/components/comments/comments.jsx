@@ -28,7 +28,7 @@ const Comments = ({id}) => {
           <Comment  key={comment._id} comment={comment}/>
         ))}
     </div>
-    <CommentsForm/>
+    <CommentsForm id={id}/>
     </div>
   )
 }
