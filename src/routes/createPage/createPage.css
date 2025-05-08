@@ -121,11 +121,6 @@ select {
   resize: none;
 }
 
-small{
-  color: #a6a6a6;
-  font-size: 13px;
-}
-
 /* FIXED: SELECT OR ADD BOARD */
 .newBoard {
   display: flex;

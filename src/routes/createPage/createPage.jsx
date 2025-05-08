@@ -1,15 +1,40 @@
 import "./createPage.css";
 import Image from "../../components/image/image";
-
+import useAuthStore from '../../utils/authStore';
+import { useNavigate } from 'react-router';
+import { useEffect, useState } from "react";
+import Editor from "../../components/editor/editor";
 const CreatePage = () => {
+
+  const { currentUser } = useAuthStore();
+  const navigate = useNavigate();
+
+  const [ file, setFile ] = useState(null);
+  const [isEditing,setIsEditing] = useState(false);
+
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate("/auth");
+    }
+  }, [navigate, currentUser])
+
+  const previewImgURL = file ? URL.createObjectURL(file) : null;
+
   return (
     <div className="createPage">
       <div className="createTop">
-        <h1>Create Pin</h1>
-        <button>Publish</button>
+        <h1>{isEditing? "Make your own pin":"Create a Pin"}</h1>
+        <button>{isEditing? "Done": "Publish"}</button>
       </div>
+      {isEditing? <Editor/>: (
       <div className="createBottom">
-        <div className="upload">
+        {previewImgURL ? (<div className="preview">
+          <img src={previewImgURL} alt="" />
+          <div className="editIcon" onClick={()=>setIsEditing(true)}>
+            <Image path="./general/edit.svg"></Image>
+          </div>
+        </div>) : (<><label htmlFor="file" className="upload">
           <div className="uploadTitle">
             <Image path="./general/upload.svg" />
             <span>Choose a file</span>
@@ -18,7 +43,8 @@ const CreatePage = () => {
             We recommend using high quality .jpg files less than 20 MB or .mp4
             files less than 200 MB.
           </div>
-        </div>
+        </label>
+          <input type="file" id="file" onChange={e => setFile(e.target.files[0])} hidden /></>)}
         <form className="createForm">
           <div className="createFormItem">
             <label htmlFor="title">Title</label>
@@ -31,8 +57,8 @@ const CreatePage = () => {
           </div>
           <div className="createFormItem">
             <label htmlFor="description">Description</label>
-            <textarea 
-            rows={6}
+            <textarea
+              rows={6}
               type="text"
               placeholder="Add a detailed description"
               name="description"
@@ -69,6 +95,7 @@ const CreatePage = () => {
           </div>
         </form>
       </div>
+      )}
     </div>
   );
 };
