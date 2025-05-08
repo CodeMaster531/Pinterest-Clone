@@ -24,7 +24,7 @@ const CreatePage = () => {
   return (
     <div className="createPage">
       <div className="createTop">
-        <h1>{isEditing? "Make your own pin":"Create a Pin"}</h1>
+        <h1>{isEditing? "Make your Design":"Create a Pin"}</h1>
         <button>{isEditing? "Done": "Publish"}</button>
       </div>
       {isEditing? <Editor/>: (
