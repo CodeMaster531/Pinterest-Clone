@@ -2,12 +2,20 @@ import "./createPage.css";
 import IKImage from "../../components/image/image";
 import useAuthStore from '../../utils/authStore';
 import { useNavigate } from 'react-router';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Editor from "../../components/editor/editor";
+import useEditorStore from "../../utils/editorStore";
+import apiRequest from "../../utils/apiRequest";
+
+
+
 const CreatePage = () => {
 
   const { currentUser } = useAuthStore();
   const navigate = useNavigate();
+  const formRef = useRef();
+  const {textOptions, canvasOptions} = useEditorStore();
+
   const [file,setFile] = useState();
   const [previewImg, setPreviewImg] = useState({
     url: "",
@@ -36,11 +44,37 @@ const CreatePage = () => {
       };
     }
   }, [file]);
+
+  const handleSubmit= async ()=>{
+    if(isEditing){
+      setIsEditing(false)
+    }
+    else{
+      const formData = new FormData(formRef.current)
+      formData.append("media",file)
+      formData.append("textOptions", JSON.stringify(textOptions))
+      formData.append("canvasOptions", JSON.stringify(canvasOptions))
+
+      try{
+        const res = await apiRequest.post("/pins", formData,{
+        headers:{
+          "Content-Type": "multipart/form-data",
+        }
+      }
+    )
+    navigate(`/pin/${res.data._id}`)
+      }
+      catch(err){
+        console.log(err)
+      }
+    }
+  }
+
   return (
     <div className="createPage">
       <div className="createTop">
         <h1>{isEditing ? "Make your Design" : "Create a Pin"}</h1>
-        <button>{isEditing ? "Done" : "Publish"}</button>
+        <button onClick={handleSubmit} >{isEditing ? "Done" : "Publish"}</button>
       </div>
       {isEditing ? <Editor previewImg={previewImg} /> : (
         <div className="createBottom">
@@ -60,7 +94,7 @@ const CreatePage = () => {
             </div>
           </label>
             <input type="file" id="file" onChange={e => setFile(e.target.files[0])} hidden /></>)}
-          <form className="createForm">
+          <form className="createForm" ref={formRef}>
             <div className="createFormItem">
               <label htmlFor="title">Title</label>
               <input
@@ -92,7 +126,7 @@ const CreatePage = () => {
             <div className="createFormItem">
               <label htmlFor="board">Board</label>
               <select name="board" id="board">
-                <option>Choose a Board</option>
+                <option value="">Choose a Board</option>
                 <option value="1">Board 1</option>
                 <option value="2">Board 2</option>
                 <option value="3">Board 3</option>
