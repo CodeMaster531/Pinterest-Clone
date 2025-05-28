@@ -84,7 +84,9 @@ const Options = ({ previewImg }) => {
   const handleOrientationClick = (orientation) => {
     let newHeight;
 
-    if (originalOrientation === orientation){
+    if (
+      originalOrientation === orientation
+    ) {
       newHeight = (375 * previewImg.height) / previewImg.width;
     } else {
       newHeight = (375 * previewImg.width) / previewImg.height;
@@ -102,7 +104,9 @@ const Options = ({ previewImg }) => {
     let newHeight;
 
     if (size === "original") {
-      if (originalOrientation === canvasOptions.orientation){
+      if (
+        originalOrientation === canvasOptions.orientation
+      ) {
         newHeight = (375 * previewImg.height) / previewImg.width;
       } else {
         newHeight = (375 * previewImg.width) / previewImg.height;
