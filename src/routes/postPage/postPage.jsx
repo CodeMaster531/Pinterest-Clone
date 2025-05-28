@@ -1,28 +1,29 @@
-import './postPage.css'
-import Image from '../../components/image/image'
-import PostInteractions from '../../components/postInteractions/postInteractions'
-import Comments from '../../components/comments/comments'
-import { Link, useParams } from 'react-router'
-import apiRequest from '../../utils/apiRequest'
-import { useQuery } from '@tanstack/react-query'
-
-
+import "./postPage.css";
+import Image from "../../components/image/image";
+import PostInteractions from "../../components/postInteractions/postInteractions";
+import { Link, useParams } from "react-router";
+import Comments from "../../components/comments/comments";
+import { useQuery } from "@tanstack/react-query";
+import apiRequest from "../../utils/apiRequest";
 
 const PostPage = () => {
+  const { id } = useParams();
 
-  const {id} = useParams()
-
-  const {isPending, error, data} = useQuery({
-    queryKey: ['pin', id],
+  const { isPending, error, data } = useQuery({
+    queryKey: ["pin", id],
     queryFn: () => apiRequest.get(`/pins/${id}`).then((res) => res.data),
-  })
+  });
 
-  if (isPending) return "Loading..."
-  if (error) return "Something went wrong" + error.message
-  if (!data) return "Pin not found"
+  if (isPending) return "Loading...";
+
+  if (error) return "An error has occurred: " + error.message;
+
+  if (!data) return "Pin not found!";
+
+  console.log(data)
 
   return (
-    <div className='postPage'>
+    <div className="postPage">
       <svg
         height="20"
         viewBox="0 0 24 24"
@@ -36,16 +37,16 @@ const PostPage = () => {
           <Image path={data.media} alt="" w={736} />
         </div>
         <div className="postDetails">
-          <PostInteractions />
+          <PostInteractions postId={id}/>
           <Link to={`/${data.user.username}`} className="postUser">
-          <Image path={data.user.img || "./general/noAvatar.png"}/>
-          <span>{data.user.displayName}</span>
+            <Image path={data.user.img || "/general/noAvatar.png"} />
+            <span>{data.user.displayName}</span>
           </Link>
-          <Comments id={data._id} />
+          <Comments id={data._id}/>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PostPage
+export default PostPage;
