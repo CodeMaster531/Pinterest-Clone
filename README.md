@@ -14,7 +14,7 @@ A full-stack Pinterest-style image gallery web application built with the MERN s
 - 🖼️ Easily customizable to work with APIs or your own image data  
 
 ---
-
+---
 ## 🛠️ Tech Stack
 
 - **React.js** – Frontend UI with component-based architecture  
